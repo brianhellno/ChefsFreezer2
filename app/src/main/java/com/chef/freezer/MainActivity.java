@@ -1,11 +1,20 @@
 package com.chef.freezer;
 
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.chef.freezer.loader.AppCard;
+import com.chef.freezer.loader.AppListLoader;
+
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
+
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,4 +43,19 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public Loader<List<AppCard>> onCreateLoader(int id, Bundle args) {
+        return new AppListLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<AppCard>> loader, List<AppCard> data) {
+        //EventBus.getDefault().post(new ListUpdateEvent(data));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<AppCard>> loader) {
+    }
+
 }
