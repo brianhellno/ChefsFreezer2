@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:cardview-v7:+'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'de.greenrobot:eventbus:2.4.0'
+    compile files('libs/RootTools.jar')
 }

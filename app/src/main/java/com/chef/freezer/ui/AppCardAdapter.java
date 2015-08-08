@@ -1,5 +1,6 @@
 package com.chef.freezer.ui;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,8 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
+                    DialogFragment newFragment = AppDialog.newInstance((AppCard) v.getItemAtPosition(position));
+                    newFragment.show(getFragmentManager(), "dialog");
                 }
             });
 

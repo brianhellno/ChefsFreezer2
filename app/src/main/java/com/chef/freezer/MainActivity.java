@@ -2,6 +2,7 @@ package com.chef.freezer;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
@@ -17,11 +18,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chef.freezer.events.DefrostAppEvent;
+import com.chef.freezer.events.DialogCancelEvent;
+import com.chef.freezer.events.FreezeAppEvent;
+import com.chef.freezer.events.UninstallAppCheckEvent;
+import com.chef.freezer.events.UninstallAppEvent;
 import com.chef.freezer.loader.AppCard;
 import com.chef.freezer.loader.AppListLoader;
 import com.chef.freezer.ui.AppCardAdapter;
+import com.chef.freezer.ui.AppDialogUninstall;
+import com.chef.freezer.util.RootUtil;
+import com.stericson.RootTools.RootTools;
 
+import java.io.IOException;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
@@ -38,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        EventBus.getDefault().register(this);
+        RootTools.debugMode = true;
+        RootTools.isAccessGiven();
+
         mDrawerList = (ListView)findViewById(R.id.navList);
         addDrawerItems();
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -50,6 +66,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ca = new AppCardAdapter();
 
         getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        try {
+            RootTools.closeAllShells();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -96,6 +123,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<List<AppCard>> loader) {
+    }
+
+    public void onEvent(FreezeAppEvent event) {
+        showthed(event.faeae.mLabel);
+        RootUtil.rootcommandtest(event.getc());
+    }
+
+    public void onEvent(DefrostAppEvent event) {
+        showthed(event.daeae.mLabel);
+        RootUtil.rootcommandtest(event.getc());
+    }
+
+    public void onEvent(DialogCancelEvent event) {
+        dialog.cancel();
+    }
+
+    public void onEvent(UninstallAppCheckEvent event) {
+        DialogFragment newFragment = AppDialogUninstall.newInstance(event.uaceae);
+        newFragment.show(getSupportFragmentManager(), "uninstalldialog");
+    }
+
+    public void onEvent(UninstallAppEvent event) {
+        showthed(event.uaeae.mLabel);
+        RootUtil.rootcommandtest(event.getc());
+    }
+
+    private void showthed(String s) {
+        dialog = ProgressDialog.show(this, "Uninstall", s);
+        dialog.setCancelable(true);
     }
 
 }
