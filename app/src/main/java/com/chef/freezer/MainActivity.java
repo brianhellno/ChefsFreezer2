@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chef.freezer.events.AppListEvent;
 import com.chef.freezer.loader.AppCard;
 import com.chef.freezer.loader.AppListLoader;
+import com.chef.freezer.ui.AppCardAdapter;
 
 import java.util.List;
 
@@ -26,54 +29,55 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
+    private static final String TAG = "LoaderManager";
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
     private DrawerLayout drawerLayout;
     private ProgressDialog dialog;
+    private AppCardAdapter ca;
+    private RecyclerView recList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
         mDrawerList = (ListView)findViewById(R.id.navList);
         addDrawerItems();
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
-        recList.setHasFixedSize(true);
+        //RecyclerView recList;
+        recList = (RecyclerView) findViewById(R.id.cardList);
+        //recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
 
-//        AppCardAdapter ca = new AppCardAdapter(createList(200));
+        ca = new AppCardAdapter();
+
+//        ca = new AppCardAdapter(createList(200));
 //        recList.setAdapter(ca);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        EventBus.getDefault().unregister(this);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(MainActivity.this, R.string.action_settings, Toast.LENGTH_LONG).show();
             return true;
@@ -103,11 +107,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<AppCard>> loader, List<AppCard> data) {
-        //EventBus.getDefault().post(new ListUpdateEvent(data));
+        //EventBus.getDefault().post(new AppListEvent(data));
+        //ca = new AppCardAdapter(data);
+        //ca.appList.clear();
+        for (AppCard ac : data){
+            Log.d(TAG, "onLoadFinished " + ac.getPackageName());
+        }
+        Log.d(TAG, "onLoadFinished " + data.toArray());
+        ca.setapplist(data);
+        recList.setAdapter(ca);
     }
 
     @Override
     public void onLoaderReset(Loader<List<AppCard>> loader) {
     }
+
+//    public void onEvent(AppListEvent event) {
+//        ca = new AppCardAdapter(event.AEList);
+//        recList.setAdapter(ca);
+//    }
 
 }

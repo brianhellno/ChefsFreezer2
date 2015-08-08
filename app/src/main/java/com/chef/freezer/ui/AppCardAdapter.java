@@ -18,9 +18,17 @@ import java.util.List;
  */
 public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewHolder> {
 
-    private List<AppCard> appList;
+    public List<AppCard> appList;
 
-    public AppCardAdapter(List<AppCard> appCardList) {
+//    public AppCardAdapter(List<AppCard> appCardList) {
+//        this.appList = appCardList;
+//    }
+
+    public AppCardAdapter(){
+
+    }
+
+    public void setapplist(List<AppCard> appCardList){
         this.appList = appCardList;
     }
 
@@ -33,9 +41,9 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
     public void onBindViewHolder(AppViewHolder appViewHolder, int i) {
         AppCard ci = appList.get(i);
         appViewHolder.mIcon.setImageDrawable(ci.getIcon());
-        appViewHolder.tName.setText(ci.getPackageName());
-        appViewHolder.tVersionCode.setText(ci.getversioncode());
-        appViewHolder.tVersionName.setText(ci.getversionname());
+        appViewHolder.tName.setText(ci.toString());
+        appViewHolder.tVersionCode.setText(ci.toString());
+        appViewHolder.tVersionName.setText(ci.toString());
 
 //        appViewHolder.vName.setText(ci.name);
 //        appViewHolder.vSurname.setText(ci.surname);
