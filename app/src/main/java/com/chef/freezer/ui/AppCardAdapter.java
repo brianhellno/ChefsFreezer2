@@ -13,6 +13,10 @@ import com.chef.freezer.R;
 import com.chef.freezer.loader.AppCard;
 
 import java.util.List;
+import android.content.Context;
+import android.app.Activity;
+import de.greenrobot.event.EventBus;
+import com.chef.freezer.events.AppDialogEvent;
 
 /**
  * Created by Brian on 8/8/2015.
@@ -20,8 +24,10 @@ import java.util.List;
 public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewHolder> {
 
     public List<AppCard> appList;
+	public static Context mContext;
 
-    public AppCardAdapter(){
+    public AppCardAdapter(Context c){
+		this.mContext = c;
     }
 
     public void setapplist(List<AppCard> appCardList){
@@ -44,6 +50,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         appViewHolder.tName.setText(ci.toString());
         appViewHolder.tVersionName.setText(ci.getversionname());
         appViewHolder.tVersionCode.setText(ci.getversioncode() + "");
+		appViewHolder.ac = ci;
     }
 
     @Override
@@ -59,6 +66,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         protected TextView tName;
         protected TextView tVersionName;
         protected TextView tVersionCode;
+		protected AppCard ac;
 
 
         public AppViewHolder(View v) {
@@ -68,13 +76,16 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
             tName = (TextView) v.findViewById(R.id.textviewappname);
             tVersionName = (TextView) v.findViewById(R.id.textviewversionname);
             tVersionCode = (TextView) v.findViewById(R.id.textviewversioncode);
+			
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
-                    DialogFragment newFragment = AppDialog.newInstance((AppCard) v.getItemAtPosition(position));
-                    newFragment.show(getFragmentManager(), "dialog");
+					EventBus.getDefault().post(new AppDialogEvent(ac));
+                    //DialogFragment newFragment = AppDialog.newInstance(ac);
+                    //newFragment.show(mContext.getFragmentManager(), "dialog");
+					//((Activity)context).getFragmentManager(); 
                 }
             });
 

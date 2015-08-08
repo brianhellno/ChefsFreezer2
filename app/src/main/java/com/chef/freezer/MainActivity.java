@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import com.chef.freezer.events.AppDialogEvent;
+import com.chef.freezer.ui.AppDialog;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
-        ca = new AppCardAdapter();
+        ca = new AppCardAdapter(this);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -147,6 +149,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onEvent(UninstallAppEvent event) {
         showthed(event.uaeae.mLabel);
         RootUtil.rootcommandtest(event.getc());
+    }
+	
+	public void onEvent(AppDialogEvent event) {
+        //showthed(event.ac.mLabel);
+		DialogFragment newFragment = AppDialog.newInstance(event.ac);
+		newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     private void showthed(String s) {
