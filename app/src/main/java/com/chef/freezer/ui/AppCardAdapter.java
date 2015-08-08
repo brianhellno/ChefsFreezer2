@@ -20,16 +20,15 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
     public List<AppCard> appList;
 
-//    public AppCardAdapter(List<AppCard> appCardList) {
-//        this.appList = appCardList;
-//    }
-
     public AppCardAdapter(){
-
     }
 
     public void setapplist(List<AppCard> appCardList){
         this.appList = appCardList;
+    }
+
+    public List<AppCard> getapplist(){
+        return appList;
     }
 
     @Override
@@ -42,13 +41,8 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         AppCard ci = appList.get(i);
         appViewHolder.mIcon.setImageDrawable(ci.getIcon());
         appViewHolder.tName.setText(ci.toString());
-        appViewHolder.tVersionCode.setText(ci.toString());
-        appViewHolder.tVersionName.setText(ci.toString());
-
-//        appViewHolder.vName.setText(ci.name);
-//        appViewHolder.vSurname.setText(ci.surname);
-//        appViewHolder.vEmail.setText(ci.email);
-//        appViewHolder.vTitle.setText(ci.name + " " + ci.surname);
+        appViewHolder.tVersionName.setText(ci.getversionname());
+        appViewHolder.tVersionCode.setText(ci.getversioncode() + "");
     }
 
     @Override
@@ -60,27 +54,19 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
     public static class AppViewHolder extends RecyclerView.ViewHolder {
 
-//        protected TextView vName;
-//        protected TextView vSurname;
-//        protected TextView vEmail;
-//        protected TextView vTitle;
-
         protected ImageView mIcon;
         protected TextView tName;
-        protected TextView tVersionCode;
         protected TextView tVersionName;
+        protected TextView tVersionCode;
+
 
         public AppViewHolder(View v) {
             super(v);
+
             mIcon = (ImageView) v.findViewById(R.id.appicon);
             tName = (TextView) v.findViewById(R.id.textviewappname);
             tVersionName = (TextView) v.findViewById(R.id.textviewversionname);
             tVersionCode = (TextView) v.findViewById(R.id.textviewversioncode);
-
-//            vName =  (TextView) v.findViewById(R.id.textviewappname);
-//            vSurname = (TextView)  v.findViewById(R.id.textviewversioncode);
-//            vEmail = (TextView)  v.findViewById(R.id.textviewversionname);
-//            vTitle = (TextView) v.findViewById(R.id.textviewversioncode);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -88,6 +74,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
                     Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
     }
 

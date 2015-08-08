@@ -13,14 +13,6 @@ import java.io.File;
  */
 public class AppCard {
 
-    public String name;
-    public String surname;
-    public String email;
-
-    public static final String NAME_PREFIX = "Name_";
-    public static final String SURNAME_PREFIX = "Surname_";
-    public static final String EMAIL_PREFIX = "email_";
-
     private final AppListLoader mLoader;
     public final ApplicationInfo mInfo;
     public final File mApkFile;
@@ -64,6 +56,10 @@ public class AppCard {
     public String nullcheck(String s) {
         return (s == null) ? "N/A" : s;
     }
+
+//    public int nullcheck(int i) {
+//        return (i == null) ? "N/A" : i;
+//    }
 
     public String getprocessname(){
         String ProcessName = mInfo.processName;
