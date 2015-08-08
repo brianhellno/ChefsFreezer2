@@ -32,6 +32,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
     public void setapplist(List<AppCard> appCardList){
         this.appList = appCardList;
+		this.notifyDataSetChanged();
     }
 
     public List<AppCard> getapplist(){

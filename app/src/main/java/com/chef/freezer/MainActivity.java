@@ -36,6 +36,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import com.chef.freezer.events.AppDialogEvent;
 import com.chef.freezer.ui.AppDialog;
+import com.chef.freezer.events.ListUpdateEvent;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
@@ -108,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             Toast.makeText(MainActivity.this, ((TextView)view).getText(), Toast.LENGTH_LONG).show();
+			if(((TextView)view).getText() == "Android"){
+				EventBus.getDefault().post(new ListUpdateEvent(ca.getapplist()));
+			}
             drawerLayout.closeDrawer(mDrawerList);
         }
     }
@@ -155,6 +159,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //showthed(event.ac.mLabel);
 		DialogFragment newFragment = AppDialog.newInstance(event.ac);
 		newFragment.show(getSupportFragmentManager(), "dialog");
+    }
+	
+	public void onEvent(ListUpdateEvent event) {
+		ca.setapplist(event.systemlist());
     }
 
     private void showthed(String s) {
