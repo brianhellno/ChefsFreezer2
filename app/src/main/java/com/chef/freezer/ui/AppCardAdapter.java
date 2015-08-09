@@ -17,6 +17,8 @@ import android.content.Context;
 import android.app.Activity;
 import de.greenrobot.event.EventBus;
 import com.chef.freezer.events.AppDialogEvent;
+import android.graphics.Color;
+import android.util.Log;
 
 /**
  * Created by Brian on 8/8/2015.
@@ -24,16 +26,22 @@ import com.chef.freezer.events.AppDialogEvent;
 public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewHolder> {
 
     public List<AppCard> appList;
-	public static Context mContext;
 
-    public AppCardAdapter(Context c){
-		this.mContext = c;
+    public AppCardAdapter(){
     }
 
     public void setapplist(List<AppCard> appCardList){
+//		if(this.appList != null){
+//			appList.clear();
+//		}
         this.appList = appCardList;
 		this.notifyDataSetChanged();
+		
     }
+	
+//	public void setapplistall(List<AppCard> lac){
+//		List<AppCard> mAC = lac;
+//	}
 
     public List<AppCard> getapplist(){
         return appList;
@@ -69,7 +77,6 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         protected TextView tVersionCode;
 		protected AppCard ac;
 
-
         public AppViewHolder(View v) {
             super(v);
 
@@ -78,15 +85,20 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
             tVersionName = (TextView) v.findViewById(R.id.textviewversionname);
             tVersionCode = (TextView) v.findViewById(R.id.textviewversioncode);
 			
+			if(ac != null){
+			if(ac.isappfrozen()){
+				Log.v("Boom", "Changing text color");
+				tName.setTextColor(Color.BLUE);
+			} else {
+				tName.setTextColor(Color.BLACK);
+			}
+			}
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
 					EventBus.getDefault().post(new AppDialogEvent(ac));
-                    //DialogFragment newFragment = AppDialog.newInstance(ac);
-                    //newFragment.show(mContext.getFragmentManager(), "dialog");
-					//((Activity)context).getFragmentManager(); 
                 }
             });
 

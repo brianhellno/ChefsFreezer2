@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ProgressDialog dialog;
     private AppCardAdapter ca;
     private RecyclerView recList;
+	private List<AppCard> mAppList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
-        ca = new AppCardAdapter(this);
+        ca = new AppCardAdapter();
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -109,8 +110,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             Toast.makeText(MainActivity.this, ((TextView)view).getText(), Toast.LENGTH_LONG).show();
-			if(((TextView)view).getText() == "Android"){
-				EventBus.getDefault().post(new ListUpdateEvent(ca.getapplist()));
+			if(((TextView)view).getText().equals("Android")){
+				EventBus.getDefault().post(new ListUpdateEvent(mAppList, 0));
+			}
+			if(((TextView)view).getText().equals("iOS")){
+				EventBus.getDefault().post(new ListUpdateEvent(mAppList, 1));
+			}
+			if(((TextView)view).getText().equals("Windows")){
+				EventBus.getDefault().post(new ListUpdateEvent(mAppList, 2));
 			}
             drawerLayout.closeDrawer(mDrawerList);
         }
@@ -123,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<AppCard>> loader, List<AppCard> data) {
+		this.mAppList = data;
         ca.setapplist(data);
         recList.setAdapter(ca);
     }
@@ -162,7 +170,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 	
 	public void onEvent(ListUpdateEvent event) {
-		ca.setapplist(event.systemlist());
+		
+		switch(event.position){
+			case 0:
+				ca.setapplist(event.alllist());
+				break;
+			case 1:
+				ca.setapplist(event.userlist());
+				break;
+			case 2:
+				ca.setapplist(event.systemlist());
+				break;
+			default:
+			    break;
+		}
     }
 
     private void showthed(String s) {
