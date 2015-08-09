@@ -37,7 +37,6 @@ public class AppCard {
         }
 
         sb.append("Version Name: ").append(nullcheck(pi.versionName));
-        //sb.append((pi.versionName == null) ? "Version Name: None" : "Version Name: " + pi.versionName.toString());
         sb.append("\n");
         sb.append("Version Code: ").append(pi.versionCode);
         sb.append("\n");
@@ -57,32 +56,29 @@ public class AppCard {
         return (s == null) ? "N/A" : s;
     }
 
-//    public int nullcheck(int i) {
-//        return (i == null) ? "N/A" : i;
-//    }
-
-    public String getprocessname(){
+    public String getprocessname() {
         String ProcessName = mInfo.processName;
 
-        if(ProcessName != null){
+        if (ProcessName != null) {
             return ProcessName;
-        } else{
+        } else {
             return "N/A";
         }
     }
 
-    public String getversionname(){
+    public String getversionname() {
         PackageInfo pi = getpackinfo(mInfo.packageName);
         String VersionName = "N/A";
+		return (pi == null) ? VersionName : nullcheck(pi.versionName);
 
-        if (pi == null) {
-            return VersionName;
-        } else {
-            return nullcheck(pi.versionName);
-        }
+//        if (pi == null) {
+//            return VersionName;
+//        } else {
+//            return nullcheck(pi.versionName);
+//        }
     }
 
-    public int getversioncode(){
+    public int getversioncode() {
         PackageInfo pi = getpackinfo(mInfo.packageName);
         int VersionCode = 0;
 
@@ -93,13 +89,12 @@ public class AppCard {
         }
     }
 
-    public PackageInfo getpackinfo(String packagename){
+    public PackageInfo getpackinfo(String packagename) {
         PackageInfo pi = null;
         try {
             pi = mLoader.getContext().getPackageManager().getPackageInfo(packagename, 0);
             return pi;
-        }
-        catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
             return null;
         }
     }
@@ -166,8 +161,7 @@ public class AppCard {
             if (!mApkFile.exists()) {
                 mMounted = false;
                 mLabel = mInfo.packageName;
-            }
-            else {
+            } else {
                 mMounted = true;
                 CharSequence label = mInfo.loadLabel(context.getPackageManager());
                 mLabel = label != null ? label.toString() : mInfo.packageName;

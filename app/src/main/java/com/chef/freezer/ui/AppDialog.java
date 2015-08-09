@@ -44,7 +44,6 @@ public class AppDialog extends DialogFragment {
                 .setIcon(mAE.mIcon)
                 .setTitle(mAE.toString())
                 .setMessage(mAE.maketext())
-                        //.seton
                 .setPositiveButton(launch, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (LaunchIntent != null) {

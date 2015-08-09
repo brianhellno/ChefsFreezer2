@@ -26,24 +26,17 @@ public class AppDialogUninstall extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         return new AlertDialog.Builder(getActivity())
                 .setIcon(mAE.getIcon())
                 .setTitle(mAE.toString())
                 .setMessage("Are you sure you want to remove this app? These changes cannot be undone.")
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
                                 EventBus.getDefault().post(new UninstallAppEvent(mAE));
-                                //mListener.onDialogConfirmUninstall(mAE);
                             }
                         })
-                .setNegativeButton("No",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
                                 //Cancel Dialog
                             }
                         }).create();

@@ -27,23 +27,15 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
     public List<AppCard> appList;
 
-    public AppCardAdapter(){
+    public AppCardAdapter() {
     }
 
-    public void setapplist(List<AppCard> appCardList){
-//		if(this.appList != null){
-//			appList.clear();
-//		}
+    public void setapplist(List<AppCard> appCardList) {
         this.appList = appCardList;
 		this.notifyDataSetChanged();
-		
     }
-	
-//	public void setapplistall(List<AppCard> lac){
-//		List<AppCard> mAC = lac;
-//	}
 
-    public List<AppCard> getapplist(){
+    public List<AppCard> getapplist() {
         return appList;
     }
 
@@ -65,7 +57,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
     @Override
     public AppViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.app_card, viewGroup, false);
+			.inflate(R.layout.app_card, viewGroup, false);
         return new AppViewHolder(itemView);
     }
 
@@ -79,28 +71,16 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
         public AppViewHolder(View v) {
             super(v);
-
             mIcon = (ImageView) v.findViewById(R.id.appicon);
             tName = (TextView) v.findViewById(R.id.textviewappname);
             tVersionName = (TextView) v.findViewById(R.id.textviewversionname);
             tVersionCode = (TextView) v.findViewById(R.id.textviewversioncode);
-			
-			if(ac != null){
-			if(ac.isappfrozen()){
-				Log.v("Boom", "Changing text color");
-				tName.setTextColor(Color.BLUE);
-			} else {
-				tName.setTextColor(Color.BLACK);
-			}
-			}
-
             v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
-					EventBus.getDefault().post(new AppDialogEvent(ac));
-                }
-            });
+					@Override
+					public void onClick(View v) {
+						EventBus.getDefault().post(new AppDialogEvent(ac));
+					}
+				});
 
         }
     }
