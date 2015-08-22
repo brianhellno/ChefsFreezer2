@@ -40,14 +40,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
     //private static final String TAG = "LoaderManager";
+	//private ArrayAdapter<String> mAdapter;
+	
     private ListView mDrawerList;
-    //private ArrayAdapter<String> mAdapter;
     private DrawerLayout drawerLayout;
     private ProgressDialog dialog;
     private AppCardAdapter ca;
     private RecyclerView recList;
 	private List<AppCard> mAppList;
-	
 	private int mDrawerSelect = 0;
 	
     @Override
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mDrawerList = (ListView)findViewById(R.id.navList);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         recList = (RecyclerView) findViewById(R.id.cardList);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -70,12 +69,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ca = new AppCardAdapter();
 
 		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[4];
-		
 		drawerItem[0] = new ObjectDrawerItem(R.mipmap.ic_launcher, "All");
 		drawerItem[1] = new ObjectDrawerItem(R.mipmap.ic_launcher, "User");
 		drawerItem[2] = new ObjectDrawerItem(R.mipmap.ic_launcher, "System");
 		drawerItem[3] = new ObjectDrawerItem(R.mipmap.ic_launcher, "Frozen");
-
 		DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.drawer_list_item, drawerItem);
 		mDrawerList.setAdapter(adapter);
 		mDrawerList.setItemChecked(0, true);

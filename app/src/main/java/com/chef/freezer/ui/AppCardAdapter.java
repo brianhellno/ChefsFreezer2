@@ -46,11 +46,19 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
     @Override
     public void onBindViewHolder(AppViewHolder appViewHolder, int i) {
-        AppCard ci = appList.get(i);
+		
+		AppCard ci = appList.get(i);
+		
+		String s = "";
+		if(ci.isappfrozen()){
+			s = "Frozen";
+		}
+	
         appViewHolder.mIcon.setImageDrawable(ci.getIcon());
         appViewHolder.tName.setText(ci.toString());
         appViewHolder.tVersionName.setText(ci.getversionname());
         appViewHolder.tVersionCode.setText(ci.getversioncode() + "");
+		appViewHolder.tFrozen.setText(s);
 		appViewHolder.ac = ci;
     }
 
@@ -67,6 +75,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         protected TextView tName;
         protected TextView tVersionName;
         protected TextView tVersionCode;
+		protected TextView tFrozen;
 		protected AppCard ac;
 
         public AppViewHolder(View v) {
@@ -75,6 +84,7 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
             tName = (TextView) v.findViewById(R.id.textviewappname);
             tVersionName = (TextView) v.findViewById(R.id.textviewversionname);
             tVersionCode = (TextView) v.findViewById(R.id.textviewversioncode);
+			tFrozen = (TextView) v.findViewById(R.id.tvfrozen);
             v.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
