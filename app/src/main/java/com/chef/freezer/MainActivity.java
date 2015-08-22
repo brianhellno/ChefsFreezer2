@@ -18,15 +18,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chef.freezer.events.AppDialogEvent;
 import com.chef.freezer.events.DefrostAppEvent;
 import com.chef.freezer.events.DialogCancelEvent;
 import com.chef.freezer.events.FreezeAppEvent;
+import com.chef.freezer.events.ListUpdateEvent;
 import com.chef.freezer.events.UninstallAppCheckEvent;
 import com.chef.freezer.events.UninstallAppEvent;
 import com.chef.freezer.loader.AppCard;
 import com.chef.freezer.loader.AppListLoader;
 import com.chef.freezer.ui.AppCardAdapter;
+import com.chef.freezer.ui.AppDialog;
 import com.chef.freezer.ui.AppDialogUninstall;
+import com.chef.freezer.ui.DrawerItemCustomAdapter;
+import com.chef.freezer.ui.ObjectDrawerItem;
 import com.chef.freezer.util.RootUtil;
 import com.stericson.RootTools.RootTools;
 
@@ -39,11 +44,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final String TAG = "LoaderManager";
     private ListView mDrawerList;
-    private ArrayAdapter<String> mAdapter;
     private DrawerLayout drawerLayout;
     private ProgressDialog dialog;
     private AppCardAdapter ca;
     private RecyclerView recList;
+    private List<AppCard> mAppList;
+    private int mDrawerSelect = 0;
+
+    //private ArrayAdapter<String> mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         RootTools.debugMode = true;
         RootTools.isAccessGiven();
 
-        mDrawerList = (ListView)findViewById(R.id.navList);
-        addDrawerItems();
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        //addDrawerItems();
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -64,6 +72,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
         ca = new AppCardAdapter();
+
+        ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[4];
+
+        drawerItem[0] = new ObjectDrawerItem(R.mipmap.ic_launcher, "All");
+        drawerItem[1] = new ObjectDrawerItem(R.mipmap.ic_launcher, "User");
+        drawerItem[2] = new ObjectDrawerItem(R.mipmap.ic_launcher, "System");
+        drawerItem[3] = new ObjectDrawerItem(R.mipmap.ic_launcher, "Frozen");
+
+        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.drawer_list_item, drawerItem);
+        mDrawerList.setAdapter(adapter);
+        mDrawerList.setItemChecked(0, true);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -96,19 +115,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
-    private void addDrawerItems() {
-        String[] osArray = { "Android", "iOS", "Windows", "OS X", "Linux", "Boom" };
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
-        mDrawerList.setAdapter(mAdapter);
-    }
+//    private void addDrawerItems() {
+//        String[] osArray = {"Android", "iOS", "Windows", "OS X", "Linux", "Boom"};
+//        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+//        mDrawerList.setAdapter(mAdapter);
+//    }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            Toast.makeText(MainActivity.this, ((TextView)view).getText(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, ((TextView) view).getText(), Toast.LENGTH_LONG).show();
+            mDrawerSelect = position;
+            EventBus.getDefault().post(new ListUpdateEvent(mAppList, position));
             drawerLayout.closeDrawer(mDrawerList);
         }
     }
+
+    	public void setmainappslist(List<AppCard> lac){
+        		this.mAppList = lac;
+        		if(ca.getapplist() == null){
+            			ca.setapplist(lac);
+            			recList.setAdapter(ca);
+            		}
+        		EventBus.getDefault().post(new ListUpdateEvent(mAppList, mDrawerSelect));
+        	}
 
     @Override
     public Loader<List<AppCard>> onCreateLoader(int id, Bundle args) {
@@ -117,13 +147,38 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<AppCard>> loader, List<AppCard> data) {
-        ca.setapplist(data);
-        recList.setAdapter(ca);
+//        ca.setapplist(data);
+//        recList.setAdapter(ca);
+        setmainappslist(data);
     }
 
     @Override
     public void onLoaderReset(Loader<List<AppCard>> loader) {
     }
+
+    	public void onEvent(AppDialogEvent event) {
+        		DialogFragment newFragment = AppDialog.newInstance(event.ac);
+        		newFragment.show(getSupportFragmentManager(), "dialog");
+            }
+
+    	public void onEvent(ListUpdateEvent event) {
+        		switch(event.position){
+            			case 0:
+                				ca.setapplist(event.alllist());
+                				break;
+            			case 1:
+                				ca.setapplist(event.userlist());
+                				break;
+            			case 2:
+                				ca.setapplist(event.systemlist());
+                				break;
+            			case 3:
+                				ca.setapplist(event.frozenlist());
+                				break;
+            			default:
+                			    break;
+            		}
+            }
 
     public void onEvent(FreezeAppEvent event) {
         showthed(event.faeae.mLabel);

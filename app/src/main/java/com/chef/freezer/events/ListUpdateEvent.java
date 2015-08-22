@@ -11,9 +11,11 @@ import java.util.List;
 public class ListUpdateEvent {
 
     List<AppCard> AEList;
+    public int position;
 
-    public ListUpdateEvent(List<AppCard> lae) {
+    public ListUpdateEvent(List<AppCard> lae, int i) {
         this.AEList = lae;
+        this.position = i;
     }
 
     public List<AppCard> alllist() {

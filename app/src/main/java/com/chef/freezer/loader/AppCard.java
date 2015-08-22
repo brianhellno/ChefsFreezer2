@@ -74,12 +74,12 @@ public class AppCard {
     public String getversionname(){
         PackageInfo pi = getpackinfo(mInfo.packageName);
         String VersionName = "N/A";
-
-        if (pi == null) {
-            return VersionName;
-        } else {
-            return nullcheck(pi.versionName);
-        }
+        return (pi == null) ? VersionName : nullcheck(pi.versionName);
+//        if (pi == null) {
+//            return VersionName;
+//        } else {
+//            return nullcheck(pi.versionName);
+//        }
     }
 
     public int getversioncode(){
@@ -94,7 +94,7 @@ public class AppCard {
     }
 
     public PackageInfo getpackinfo(String packagename){
-        PackageInfo pi = null;
+        PackageInfo pi;
         try {
             pi = mLoader.getContext().getPackageManager().getPackageInfo(packagename, 0);
             return pi;

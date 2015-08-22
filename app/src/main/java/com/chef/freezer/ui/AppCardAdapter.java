@@ -1,5 +1,6 @@
 package com.chef.freezer.ui;
 
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chef.freezer.R;
+import com.chef.freezer.events.AppDialogEvent;
 import com.chef.freezer.loader.AppCard;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Brian on 8/8/2015.
@@ -21,14 +25,15 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
 
     public List<AppCard> appList;
 
-    public AppCardAdapter(){
+    public AppCardAdapter() {
     }
 
-    public void setapplist(List<AppCard> appCardList){
+    public void setapplist(List<AppCard> appCardList) {
         this.appList = appCardList;
+        this.notifyDataSetChanged();
     }
 
-    public List<AppCard> getapplist(){
+    public List<AppCard> getapplist() {
         return appList;
     }
 
@@ -40,10 +45,18 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
     @Override
     public void onBindViewHolder(AppViewHolder appViewHolder, int i) {
         AppCard ci = appList.get(i);
+
+        		String s = "";
+        		if(ci.isappfrozen()){
+            			s = "Frozen";
+            		}
+
         appViewHolder.mIcon.setImageDrawable(ci.getIcon());
         appViewHolder.tName.setText(ci.toString());
         appViewHolder.tVersionName.setText(ci.getversionname());
         appViewHolder.tVersionCode.setText(ci.getversioncode() + "");
+        appViewHolder.tFrozen.setText(s);
+        appViewHolder.ac = ci;
     }
 
     @Override
@@ -59,7 +72,8 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         protected TextView tName;
         protected TextView tVersionName;
         protected TextView tVersionCode;
-
+        protected TextView tFrozen;
+        protected AppCard ac;
 
         public AppViewHolder(View v) {
             super(v);
@@ -68,13 +82,15 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
             tName = (TextView) v.findViewById(R.id.textviewappname);
             tVersionName = (TextView) v.findViewById(R.id.textviewversionname);
             tVersionCode = (TextView) v.findViewById(R.id.textviewversioncode);
+            tFrozen = (TextView) v.findViewById(R.id.tvfrozen);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
-                    DialogFragment newFragment = AppDialog.newInstance((AppCard) v.getItemAtPosition(position));
-                    newFragment.show(getFragmentManager(), "dialog");
+                    EventBus.getDefault().post(new AppDialogEvent(ac));
+//                    Toast.makeText(v.getContext(), tName.getText(), Toast.LENGTH_SHORT).show();
+//                    DialogFragment newFragment = AppDialog.newInstance((AppCard) v.getItemAtPosition(position));
+//                    newFragment.show(getFragmentManager(), "dialog");
                 }
             });
 
