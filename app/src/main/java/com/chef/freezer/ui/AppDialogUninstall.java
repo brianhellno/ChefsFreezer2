@@ -13,9 +13,12 @@ import de.greenrobot.event.EventBus;
 
 /**
  * Created by Brian on 8/8/2015.
+ * <p/>
+ * Dialog for uninstalling an app.
  */
 public class AppDialogUninstall extends DialogFragment {
 
+    private static final String TAG = "AppDialogUninstall";
     AppCard mAE;
 
     public static AppDialogUninstall newInstance(AppCard AE) {
@@ -26,27 +29,20 @@ public class AppDialogUninstall extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         return new AlertDialog.Builder(getActivity())
                 .setIcon(mAE.getIcon())
                 .setTitle(mAE.toString())
                 .setMessage("Are you sure you want to remove this app? These changes cannot be undone.")
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-
-                                EventBus.getDefault().post(new UninstallAppEvent(mAE));
-                                //mListener.onDialogConfirmUninstall(mAE);
-                            }
-                        })
-                .setNegativeButton("No",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                //Cancel Dialog
-                            }
-                        }).create();
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        EventBus.getDefault().post(new UninstallAppEvent(mAE));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //Cancel Dialog
+                    }
+                }).create();
     }
 
 }

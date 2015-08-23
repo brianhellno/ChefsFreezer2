@@ -6,6 +6,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
+import com.chef.freezer.util.Logger;
+
 import java.io.File;
 
 /**
@@ -13,6 +15,7 @@ import java.io.File;
  */
 public class AppCard {
 
+    private static final String TAG = "AppCard";
     private final AppListLoader mLoader;
     public final ApplicationInfo mInfo;
     public final File mApkFile;
@@ -37,7 +40,6 @@ public class AppCard {
         }
 
         sb.append("Version Name: ").append(nullcheck(pi.versionName));
-        //sb.append((pi.versionName == null) ? "Version Name: None" : "Version Name: " + pi.versionName.toString());
         sb.append("\n");
         sb.append("Version Code: ").append(pi.versionCode);
         sb.append("\n");
@@ -50,6 +52,7 @@ public class AppCard {
         sb.append((pi.applicationInfo.processName == null) ? "Process: None" : "Process: " + pi.applicationInfo.processName);
         sb.append("\n");
         sb.append("Package: ").append(pi.applicationInfo.packageName);
+        Logger.logv(TAG, sb.toString());
         return sb;
     }
 
@@ -57,34 +60,29 @@ public class AppCard {
         return (s == null) ? "N/A" : s;
     }
 
-//    public int nullcheck(int i) {
-//        return (i == null) ? "N/A" : i;
-//    }
-
-    public String getprocessname(){
+    public String getprocessname() {
         String ProcessName = mInfo.processName;
+        //Logger.logv(TAG, "Process Name: " + ProcessName);
 
-        if(ProcessName != null){
+        if (ProcessName != null) {
             return ProcessName;
-        } else{
+        } else {
             return "N/A";
         }
     }
 
-    public String getversionname(){
+    public String getversionname() {
         PackageInfo pi = getpackinfo(mInfo.packageName);
         String VersionName = "N/A";
+        //Logger.logv(TAG, "Version Name: " + nullcheck(pi.versionName));
         return (pi == null) ? VersionName : nullcheck(pi.versionName);
-//        if (pi == null) {
-//            return VersionName;
-//        } else {
-//            return nullcheck(pi.versionName);
-//        }
     }
 
-    public int getversioncode(){
+    public int getversioncode() {
         PackageInfo pi = getpackinfo(mInfo.packageName);
         int VersionCode = 0;
+
+        //Logger.logv(TAG, "Version Code: " + pi.versionCode);
 
         if (pi == null) {
             return VersionCode;
@@ -93,13 +91,12 @@ public class AppCard {
         }
     }
 
-    public PackageInfo getpackinfo(String packagename){
+    public PackageInfo getpackinfo(String packagename) {
         PackageInfo pi;
         try {
             pi = mLoader.getContext().getPackageManager().getPackageInfo(packagename, 0);
             return pi;
-        }
-        catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
             return null;
         }
     }
@@ -132,9 +129,9 @@ public class AppCard {
         return (mInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1;
     }
 
-    public boolean isUpdatedSystemApp() {
+/*    public boolean isUpdatedSystemApp() {
         return (mInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 1;
-    }
+    }*/
 
     public Drawable getIcon() {
         if (mIcon == null) {
@@ -166,8 +163,7 @@ public class AppCard {
             if (!mApkFile.exists()) {
                 mMounted = false;
                 mLabel = mInfo.packageName;
-            }
-            else {
+            } else {
                 mMounted = true;
                 CharSequence label = mInfo.loadLabel(context.getPackageManager());
                 mLabel = label != null ? label.toString() : mInfo.packageName;

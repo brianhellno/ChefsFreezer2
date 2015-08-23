@@ -8,10 +8,14 @@ import android.support.v7.app.AlertDialog;
 
 /**
  * Created by Brian on 8/8/2015.
+ * <p/>
+ * Dialog about the application.
  */
 public class AppDialogAbout extends DialogFragment {
 
-    public static AppDialogAbout newInstance(){
+    private static final String TAG = "AppDialogAbout";
+
+    public static AppDialogAbout newInstance() {
         AppDialogAbout frag = new AppDialogAbout();
         return frag;
     }

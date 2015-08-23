@@ -9,22 +9,21 @@ import com.chef.freezer.loader.AppListLoader;
 
 /**
  * Created by Brian on 8/8/2015.
+ * <p/>
+ * Updates the Loader to the current state of applications.
  */
 public class InstalledAppsObserver extends BroadcastReceiver {
 
+    private static final String TAG = "InstalledAppsObserver";
     private AppListLoader mLoader;
 
     public InstalledAppsObserver(AppListLoader loader) {
         mLoader = loader;
-
-        // Register for events related to application installs/removals/updates.
         IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
         filter.addDataScheme("package");
         mLoader.getContext().registerReceiver(this, filter);
-
-        // Register for events related to sdcard installation.
         IntentFilter sdFilter = new IntentFilter();
         sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
         sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
@@ -33,7 +32,6 @@ public class InstalledAppsObserver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Tell the loader about the change.
         mLoader.onContentChanged();
     }
 

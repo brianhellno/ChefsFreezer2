@@ -9,9 +9,12 @@ import com.chef.freezer.loader.AppListLoader;
 
 /**
  * Created by Brian on 8/8/2015.
+ * <p/>
+ * Updates the Loader with the system locale.
  */
 public class SystemLocaleObserver extends BroadcastReceiver {
 
+    private static final String TAG = "SystemLocaleObserver";
     private AppListLoader mLoader;
 
     public SystemLocaleObserver(AppListLoader loader) {
@@ -22,7 +25,6 @@ public class SystemLocaleObserver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Tell the loader about the change.
         mLoader.onContentChanged();
     }
 

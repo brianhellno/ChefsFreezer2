@@ -16,9 +16,12 @@ import de.greenrobot.event.EventBus;
 
 /**
  * Created by Brian on 8/8/2015.
+ * <p/>
+ * Dialog for seeing apps.
  */
 public class AppDialog extends DialogFragment {
 
+    private static final String TAG = "AppDialog";
     AppCard mAE;
 
     public static AppDialog newInstance(AppCard AE) {
@@ -44,12 +47,12 @@ public class AppDialog extends DialogFragment {
                 .setIcon(mAE.mIcon)
                 .setTitle(mAE.toString())
                 .setMessage(mAE.maketext())
-                        //.seton
                 .setPositiveButton(launch, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (LaunchIntent != null) {
                             startActivity(LaunchIntent);
                         } else {
+                            // Dialog is cancelled.
                         }
                     }
                 })
@@ -57,8 +60,7 @@ public class AppDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (mAE.getApplicationInfo().enabled) {
                             EventBus.getDefault().post(new FreezeAppEvent(mAE));
-                        }
-                        else {
+                        } else {
                             EventBus.getDefault().post(new DefrostAppEvent(mAE));
                         }
                     }

@@ -13,9 +13,12 @@ import com.chef.freezer.R;
 
 /**
  * Created by Brian on 8/22/2015.
+ * <p/>
+ * Adapter for the Drawer.
  */
-public class DrawerItemCustomAdapter  extends ArrayAdapter<ObjectDrawerItem> {
+public class DrawerItemCustomAdapter extends ArrayAdapter<ObjectDrawerItem> {
 
+    private static final String TAG = "DrawerItemCustomAdapter";
     Context mContext;
     int layoutResourceId;
     ObjectDrawerItem data[] = null;
@@ -29,20 +32,14 @@ public class DrawerItemCustomAdapter  extends ArrayAdapter<ObjectDrawerItem> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         View listItem = convertView;
-
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         listItem = inflater.inflate(layoutResourceId, parent, false);
-
         ImageView imageViewIcon = (ImageView) listItem.findViewById(R.id.imageViewIcon);
         TextView textViewName = (TextView) listItem.findViewById(R.id.textViewName);
-
         ObjectDrawerItem folder = data[position];
-
         imageViewIcon.setImageResource(folder.icon);
         textViewName.setText(folder.name);
-
         return listItem;
     }
 

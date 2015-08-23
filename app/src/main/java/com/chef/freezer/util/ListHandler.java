@@ -10,30 +10,12 @@ import java.util.List;
 
 /**
  * Created by Brian on 8/8/2015.
+ *
+ * Helper class for organizing the list.
  */
 public class ListHandler {
 
-    public interface Checker<T> {
-        boolean check(T obj);
-    }
-
-    public static class SystemAppChecker implements Checker<AppCard> {
-        public boolean check(AppCard AE) {
-            return ((AE.getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) == 1);
-        }
-    }
-
-    public static class UserAppChecker implements Checker<AppCard> {
-        public boolean check(AppCard AE) {
-            return ((AE.getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) != 1);
-        }
-    }
-
-    public static class DisabledAppChecker implements Checker<AppCard> {
-        public boolean check(AppCard AE) {
-            return !AE.getApplicationInfo().enabled;
-        }
-    }
+    private static final String TAG = "ListHandler";
 
     public static <T> Collection<T> findAll(Collection<T> coll, Checker<T> chk) {
         LinkedList<T> l = new LinkedList<T>();
@@ -57,6 +39,28 @@ public class ListHandler {
     public static List<AppCard> mbdisabled(List<AppCard> LAE) {
         Collection<AppCard> mDisabled = ListHandler.findAll(LAE, new DisabledAppChecker());
         return (List<AppCard>) mDisabled;
+    }
+
+    public interface Checker<T> {
+        boolean check(T obj);
+    }
+
+    public static class SystemAppChecker implements Checker<AppCard> {
+        public boolean check(AppCard AE) {
+            return ((AE.getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) == 1);
+        }
+    }
+
+    public static class UserAppChecker implements Checker<AppCard> {
+        public boolean check(AppCard AE) {
+            return ((AE.getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) != 1);
+        }
+    }
+
+    public static class DisabledAppChecker implements Checker<AppCard> {
+        public boolean check(AppCard AE) {
+            return !AE.getApplicationInfo().enabled;
+        }
     }
 
 }

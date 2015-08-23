@@ -13,9 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chef.freezer.events.AppDialogEvent;
@@ -32,6 +30,7 @@ import com.chef.freezer.ui.AppDialog;
 import com.chef.freezer.ui.AppDialogUninstall;
 import com.chef.freezer.ui.DrawerItemCustomAdapter;
 import com.chef.freezer.ui.ObjectDrawerItem;
+import com.chef.freezer.util.Logger;
 import com.chef.freezer.util.RootUtil;
 import com.stericson.RootTools.RootTools;
 
@@ -42,16 +41,15 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
-    private static final String TAG = "LoaderManager";
+    private static final String TAG = "MainActivity";
+    private List<AppCard> mAppList;
     private ListView mDrawerList;
+    private AppCardAdapter ca;
     private DrawerLayout drawerLayout;
     private ProgressDialog dialog;
-    private AppCardAdapter ca;
     private RecyclerView recList;
-    private List<AppCard> mAppList;
     private int mDrawerSelect = 0;
-
-    //private ArrayAdapter<String> mAdapter;
+    private boolean Root = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +58,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         EventBus.getDefault().register(this);
         RootTools.debugMode = true;
-        RootTools.isAccessGiven();
+        Root = RootTools.isAccessGiven();
+        Logger.logv(TAG, "Checking for Root! " + Root);
 
         mDrawerList = (ListView) findViewById(R.id.navList);
-        //addDrawerItems();
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -73,16 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recList.setLayoutManager(llm);
         ca = new AppCardAdapter();
 
-        ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[4];
-
-        drawerItem[0] = new ObjectDrawerItem(R.mipmap.ic_launcher, "All");
-        drawerItem[1] = new ObjectDrawerItem(R.mipmap.ic_launcher, "User");
-        drawerItem[2] = new ObjectDrawerItem(R.mipmap.ic_launcher, "System");
-        drawerItem[3] = new ObjectDrawerItem(R.mipmap.ic_launcher, "Frozen");
-
-        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.drawer_list_item, drawerItem);
-        mDrawerList.setAdapter(adapter);
-        mDrawerList.setItemChecked(0, true);
+        setupdraweritems();
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -107,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_settings) {
             Toast.makeText(MainActivity.this, R.string.action_settings, Toast.LENGTH_LONG).show();
             return true;
@@ -115,30 +103,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
-//    private void addDrawerItems() {
-//        String[] osArray = {"Android", "iOS", "Windows", "OS X", "Linux", "Boom"};
-//        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
-//        mDrawerList.setAdapter(mAdapter);
-//    }
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            //Toast.makeText(MainActivity.this, ((TextView) view).getText(), Toast.LENGTH_LONG).show();
-            mDrawerSelect = position;
-            EventBus.getDefault().post(new ListUpdateEvent(mAppList, position));
-            drawerLayout.closeDrawer(mDrawerList);
-        }
+    private void setupdraweritems() {
+        ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[4];
+        drawerItem[0] = new ObjectDrawerItem(R.mipmap.ic_launcher, "All");
+        drawerItem[1] = new ObjectDrawerItem(R.mipmap.ic_launcher, "User");
+        drawerItem[2] = new ObjectDrawerItem(R.mipmap.ic_launcher, "System");
+        drawerItem[3] = new ObjectDrawerItem(R.mipmap.ic_launcher, "Frozen");
+        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.drawer_list_item, drawerItem);
+        mDrawerList.setAdapter(adapter);
+        mDrawerList.setItemChecked(0, true);
+        Logger.logv(TAG, "Setup the drawer.");
     }
 
-    	public void setmainappslist(List<AppCard> lac){
-        		this.mAppList = lac;
-        		if(ca.getapplist() == null){
-            			ca.setapplist(lac);
-            			recList.setAdapter(ca);
-            		}
-        		EventBus.getDefault().post(new ListUpdateEvent(mAppList, mDrawerSelect));
-        	}
+    private void setmainappslist(List<AppCard> lac) {
+        this.mAppList = lac;
+        if (ca.getapplist() == null) {
+            ca.setapplist(lac);
+            recList.setAdapter(ca);
+        }
+        EventBus.getDefault().post(new ListUpdateEvent(mAppList, mDrawerSelect));
+    }
 
     @Override
     public Loader<List<AppCard>> onCreateLoader(int id, Bundle args) {
@@ -147,8 +131,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<AppCard>> loader, List<AppCard> data) {
-//        ca.setapplist(data);
-//        recList.setAdapter(ca);
         setmainappslist(data);
     }
 
@@ -156,38 +138,38 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<List<AppCard>> loader) {
     }
 
-    	public void onEvent(AppDialogEvent event) {
-        		DialogFragment newFragment = AppDialog.newInstance(event.ac);
-        		newFragment.show(getSupportFragmentManager(), "dialog");
-            }
+    public void onEvent(AppDialogEvent event) {
+        DialogFragment newFragment = AppDialog.newInstance(event.ac);
+        newFragment.show(getSupportFragmentManager(), "dialog");
+    }
 
-    	public void onEvent(ListUpdateEvent event) {
-        		switch(event.position){
-            			case 0:
-                				ca.setapplist(event.alllist());
-                				break;
-            			case 1:
-                				ca.setapplist(event.userlist());
-                				break;
-            			case 2:
-                				ca.setapplist(event.systemlist());
-                				break;
-            			case 3:
-                				ca.setapplist(event.frozenlist());
-                				break;
-            			default:
-                			    break;
-            		}
-            }
+    public void onEvent(ListUpdateEvent event) {
+        switch (event.position) {
+            case 0:
+                ca.setapplist(event.alllist());
+                break;
+            case 1:
+                ca.setapplist(event.userlist());
+                break;
+            case 2:
+                ca.setapplist(event.systemlist());
+                break;
+            case 3:
+                ca.setapplist(event.frozenlist());
+                break;
+            default:
+                break;
+        }
+    }
 
     public void onEvent(FreezeAppEvent event) {
         showthed(event.faeae.mLabel);
-        RootUtil.rootcommandtest(event.getc());
+        RootUtil.rootcommand(event.getc());
     }
 
     public void onEvent(DefrostAppEvent event) {
         showthed(event.daeae.mLabel);
-        RootUtil.rootcommandtest(event.getc());
+        RootUtil.rootcommand(event.getc());
     }
 
     public void onEvent(DialogCancelEvent event) {
@@ -201,12 +183,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void onEvent(UninstallAppEvent event) {
         showthed(event.uaeae.mLabel);
-        RootUtil.rootcommandtest(event.getc());
+        RootUtil.rootcommand(event.getc());
     }
 
     private void showthed(String s) {
-        dialog = ProgressDialog.show(this, "Uninstall", s);
+        dialog = ProgressDialog.show(this, "Testing", s);
         dialog.setCancelable(true);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            mDrawerSelect = position;
+            EventBus.getDefault().post(new ListUpdateEvent(mAppList, position));
+            drawerLayout.closeDrawer(mDrawerList);
+        }
     }
 
 }
