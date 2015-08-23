@@ -24,7 +24,7 @@ import de.greenrobot.event.EventBus;
 public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewHolder> {
 
     private static final String TAG = "AppCardAdapter";
-    private List<AppCard> appList;
+    public List<AppCard> appList;
 
     public AppCardAdapter() {
         Logger.logv(TAG, "Starting Adapter...");

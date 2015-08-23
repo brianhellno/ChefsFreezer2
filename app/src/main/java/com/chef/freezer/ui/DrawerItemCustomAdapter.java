@@ -22,13 +22,23 @@ public class DrawerItemCustomAdapter extends ArrayAdapter<ObjectDrawerItem> {
     Context mContext;
     int layoutResourceId;
     ObjectDrawerItem data[] = null;
+	int selecteddrawerpos;
 
     public DrawerItemCustomAdapter(Context mContext, int layoutResourceId, ObjectDrawerItem[] data) {
         super(mContext, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.mContext = mContext;
         this.data = data;
+		this.selecteddrawerpos = 0;
     }
+	
+	public int getpos(){
+		return selecteddrawerpos;
+	}
+	
+	public void setpos(int i){
+		this.selecteddrawerpos = i;
+	}
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

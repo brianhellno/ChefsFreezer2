@@ -38,17 +38,20 @@ import java.io.IOException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import com.chef.freezer.util.ListHandler;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<AppCard>> {
 
     private static final String TAG = "MainActivity";
     private List<AppCard> mAppList;
     private ListView mDrawerList;
+	DrawerItemCustomAdapter dicaadapter;
     private AppCardAdapter ca;
     private DrawerLayout drawerLayout;
     private ProgressDialog dialog;
     private RecyclerView recList;
-    private int mDrawerSelect = 0;
+    //private int mDrawerSelect = 0;
     private boolean Root = false;
 
     @Override
@@ -73,7 +76,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         setupdraweritems();
 
+		
         getSupportLoaderManager().initLoader(0, null, this);
+		//getSupportLoaderManager().getLoader(0).;
     }
 
     @Override
@@ -109,8 +114,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         drawerItem[1] = new ObjectDrawerItem(R.mipmap.ic_launcher, "User");
         drawerItem[2] = new ObjectDrawerItem(R.mipmap.ic_launcher, "System");
         drawerItem[3] = new ObjectDrawerItem(R.mipmap.ic_launcher, "Frozen");
-        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.drawer_list_item, drawerItem);
-        mDrawerList.setAdapter(adapter);
+        dicaadapter = new DrawerItemCustomAdapter(this, R.layout.drawer_list_item, drawerItem);
+		dicaadapter.setpos(0);
+        mDrawerList.setAdapter(dicaadapter);
         mDrawerList.setItemChecked(0, true);
         Logger.logv(TAG, "Setup the drawer.");
     }
@@ -121,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             ca.setapplist(lac);
             recList.setAdapter(ca);
         }
-        EventBus.getDefault().post(new ListUpdateEvent(mAppList, mDrawerSelect));
+		applistupdatetest(lac, dicaadapter.getpos());
+		//Log.v("setmainappslist", "selected position" + mDrawerList.getSelectedItemPosition());
+		Toast.makeText(this, "Drawer position: " + dicaadapter.getpos(), Toast.LENGTH_LONG).show();
+        //EventBus.getDefault().post(new ListUpdateEvent(mAppList, mDrawerSelect));
     }
 
     @Override
@@ -194,9 +203,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            mDrawerSelect = position;
-            EventBus.getDefault().post(new ListUpdateEvent(mAppList, position));
+            //mDrawerSelect = position;
+			dicaadapter.setpos(position);
+            //EventBus.getDefault().post(new ListUpdateEvent(mAppList, position));
+			setmainappslist(mAppList);
+			//applistupdatetest(mAppList, position);
             drawerLayout.closeDrawer(mDrawerList);
+        }
+    }
+	
+	public void applistupdatetest(List<AppCard> lac, int position) {
+        switch (position) {
+            case 0:
+                ca.setapplist(lac);
+                break;
+            case 1:
+                ca.setapplist(ListHandler.mbuser(lac));
+                break;
+            case 2:
+                ca.setapplist(ListHandler.mbsystem(lac));
+                break;
+            case 3:
+                ca.setapplist(ListHandler.mbdisabled(lac));
+                break;
+            default:
+                break;
         }
     }
 

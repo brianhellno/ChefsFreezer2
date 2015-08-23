@@ -24,9 +24,7 @@ public class AppListLoader extends AsyncTaskLoader<List<AppCard>> {
 
     private static final String TAG = "AppListLoader";
     final PackageManager mPm;
-    private InstalledAppsObserver mAppsObserver;
-    private SystemLocaleObserver mLocaleObserver;
-
+    
     private List<AppCard> mApps;
 
 
@@ -78,6 +76,10 @@ public class AppListLoader extends AsyncTaskLoader<List<AppCard>> {
         }
     }
 
+	private InstalledAppsObserver mAppsObserver;
+    private SystemLocaleObserver mLocaleObserver;
+	
+	
     @Override
     protected void onStartLoading() {
 
@@ -103,6 +105,7 @@ public class AppListLoader extends AsyncTaskLoader<List<AppCard>> {
     @Override
     protected void onStopLoading() {
         cancelLoad();
+		
     }
 
     @Override
