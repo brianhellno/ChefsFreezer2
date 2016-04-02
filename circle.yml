@@ -14,3 +14,6 @@ machine:
       timeout: 1200
     - (source scripts/environmentSetup.sh && waitForAVD)
  
+ test:
+  override:
+    - ./gradlew build
